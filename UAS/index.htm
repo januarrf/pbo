@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Aplikasi Login PBO</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 50px;
+    }
+    .box {
+      background: white;
+      padding: 20px;
+      width: 300px;
+      margin: auto;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    input {
+      width: 90%;
+      padding: 8px;
+      margin: 8px 0;
+    }
+    button {
+      padding: 10px;
+      width: 100%;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box" id="loginBox">
+  <h2>Login</h2>
+  <input type="text" id="username" placeholder="Username">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+
+<div class="box" id="userBox" style="display:none;">
+  <h2 id="welcomeText"></h2>
+  <p>Login berhasil 🎉</p>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<script>
+  // ===== CLASS USER (PBO) =====
+  class User {
+    constructor(username, password) {
+      this.username = username;
+      this.password = password;
+    }
+  }
+
+  // ===== CLASS AUTH (PBO) =====
+  class Auth {
+    static initUsers() {
+      if (!localStorage.getItem("users")) {
+        const users = [
+          new User("User", "User123"),
+          new User("Admin", "Admin"),
+          new User("Guest", "Guest"),
+          new User("Januar", "Januar123")
+        ];
+        localStorage.setItem("users", JSON.stringify(users));
+      }
+    }
+
+    static login(username, password) {
+      const users = JSON.parse(localStorage.getItem("users"));
+      return users.find(
+        user => user.username === username && user.password === password
+      );
+    }
+  }
+
+  // ===== INIT DATABASE =====
+  Auth.initUsers();
+
+  // ===== LOGIN FUNCTION =====
+  function login() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    const user = Auth.login(username, password);
+
+    if (user) {
+      document.getElementById("loginBox").style.display = "none";
+      document.getElementById("userBox").style.display = "block";
+      document.getElementById("welcomeText").innerText = `Hai, ${user.username}`;
+    } else {
+      alert("Gagal login! Username atau password salah ❌");
+    }
+  }
+
+  // ===== LOGOUT =====
+  function logout() {
+    document.getElementById("loginBox").style.display = "block";
+    document.getElementById("userBox").style.display = "none";
+  }
+</script>
+
+</body>
+</html>
