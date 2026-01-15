@@ -1,136 +1,176 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>Login PBO</title>
+<meta charset="UTF-8">
+<title>Gen Z Login | PBO</title>
 
-    <!-- CSS Internal -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #eef2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
 
-        .container {
-            background: white;
-            padding: 25px;
-            width: 320px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            text-align: center;
-        }
+* {
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
 
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
 
-        button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            color: white;
-            cursor: pointer;
-        }
+/* CARD */
+.card {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    padding: 30px;
+    width: 330px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    animation: fadeUp 0.8s ease;
+}
 
-        .btn-login {
-            background-color: #28a745; /* Hijau */
-        }
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px);}
+    to { opacity: 1; transform: translateY(0);}
+}
 
-        .btn-logout {
-            background-color: #dc3545; /* Merah */
-        }
-    </style>
+h2 {
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    margin: 10px 0;
+    outline: none;
+    font-size: 14px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* BUTTONS */
+.btn-login {
+    background: linear-gradient(90deg, #00f2fe, #4facfe);
+    color: #003;
+}
+
+.btn-login:hover {
+    transform: scale(1.05);
+}
+
+.btn-logout {
+    background: linear-gradient(90deg, #ff416c, #ff4b2b);
+    color: white;
+}
+
+.username-box {
+    margin: 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+</style>
 </head>
+
 <body>
 
-<!-- Halaman Login -->
-<div class="container" id="loginPage">
-    <h2>Login</h2>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
+<!-- LOGIN PAGE -->
+<div class="card" id="loginPage">
+    <h2>🚀 Hello Again</h2>
+    <p>Login dulu, dunia nungguin kamu</p>
+
+    <input type="text" id="username" placeholder="username">
+    <input type="password" id="password" placeholder="password">
+
     <button class="btn-login" onclick="app.login()">Login</button>
 </div>
 
-<!-- Halaman Profil -->
-<div class="container" id="profilePage" style="display:none;">
-    <h2>Profil Pengguna</h2>
-    <p id="profileText"></p>
+<!-- PROFILE PAGE -->
+<div class="card" id="profilePage" style="display:none;">
+    <h2>✨ Profile</h2>
+    <p>You're officially logged in</p>
+
+    <div class="username-box" id="profileName"></div>
+
     <button class="btn-logout" onclick="app.logout()">Logout</button>
 </div>
 
-<!-- JavaScript OOP -->
 <script>
-    class LoginApp {
-        constructor() {
-            // Data user default (File I/O via LocalStorage)
-            this.userData = {
-                username: "admin",
-                password: "12345"
-            };
+class GenZLoginApp {
+    constructor() {
+        this.defaultUser = {
+            username: "admin123",
+            password: "admin123"
+        };
 
-            if (!localStorage.getItem("userData")) {
-                localStorage.setItem("userData", JSON.stringify(this.userData));
-            }
-
-            this.checkLogin();
+        if (!localStorage.getItem("userData")) {
+            localStorage.setItem("userData", JSON.stringify(this.defaultUser));
         }
 
-        login() {
-            const usernameInput = document.getElementById("username").value;
-            const passwordInput = document.getElementById("password").value;
+        this.checkSession();
+    }
 
-            const storedUser = JSON.parse(localStorage.getItem("userData"));
+    login() {
+        const userInput = document.getElementById("username").value;
+        const passInput = document.getElementById("password").value;
 
-            if (
-                usernameInput === storedUser.username &&
-                passwordInput === storedUser.password
-            ) {
-                localStorage.setItem("isLogin", "true");
-                localStorage.setItem("loginUser", usernameInput);
-                this.showProfile();
-            } else {
-                alert("Login gagal! Username atau password salah.");
-            }
-        }
+        const savedUser = JSON.parse(localStorage.getItem("userData"));
 
-        logout() {
-            localStorage.removeItem("isLogin");
-            localStorage.removeItem("loginUser");
-            this.showLogin();
-        }
-
-        showProfile() {
-            document.getElementById("loginPage").style.display = "none";
-            document.getElementById("profilePage").style.display = "block";
-            document.getElementById("profileText").innerText =
-                "Selamat datang, " + localStorage.getItem("loginUser");
-        }
-
-        showLogin() {
-            document.getElementById("loginPage").style.display = "block";
-            document.getElementById("profilePage").style.display = "none";
-        }
-
-        checkLogin() {
-            if (localStorage.getItem("isLogin") === "true") {
-                this.showProfile();
-            }
+        if (userInput === savedUser.username && passInput === savedUser.password) {
+            localStorage.setItem("isLogin", "true");
+            localStorage.setItem("activeUser", userInput);
+            this.showProfile();
+        } else {
+            alert("Login gagal 😢 Coba lagi ya!");
         }
     }
 
-    // Object dari class (PBO)
-    const app = new LoginApp();
+    logout() {
+        localStorage.removeItem("isLogin");
+        localStorage.removeItem("activeUser");
+        this.showLogin();
+    }
+
+    showProfile() {
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("profilePage").style.display = "block";
+        document.getElementById("profileName").innerText =
+            "👋 Hi, " + localStorage.getItem("activeUser");
+    }
+
+    showLogin() {
+        document.getElementById("loginPage").style.display = "block";
+        document.getElementById("profilePage").style.display = "none";
+    }
+
+    checkSession() {
+        if (localStorage.getItem("isLogin") === "true") {
+            this.showProfile();
+        }
+    }
+}
+
+const app = new GenZLoginApp();
 </script>
 
 </body>
