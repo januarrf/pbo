@@ -2,175 +2,239 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Gen Z Login | PBO</title>
+<title>Animated Login PBO</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap');
 
 * {
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 body {
     margin: 0;
     height: 100vh;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: radial-gradient(circle at top, #1a2a6c, #000);
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
     color: white;
+}
+
+/* BACKGROUND ANIMATION */
+.bg {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: linear-gradient(45deg, #00c6ff, #0072ff);
+    filter: blur(120px);
+    animation: float 10s infinite alternate ease-in-out;
+}
+
+@keyframes float {
+    from { transform: translate(-150px, -100px); }
+    to   { transform: translate(150px, 100px); }
 }
 
 /* CARD */
 .card {
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(12px);
-    padding: 30px;
-    width: 330px;
+    position: relative;
+    width: 360px;
+    padding: 35px;
+    background: rgba(255,255,255,0.08);
     border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    animation: fadeUp 0.8s ease;
+    backdrop-filter: blur(18px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    animation: cardEnter 0.8s ease forwards;
 }
 
-@keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px);}
-    to { opacity: 1; transform: translateY(0);}
+@keyframes cardEnter {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 h2 {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
-p {
+.subtitle {
     font-size: 14px;
-    opacity: 0.8;
+    opacity: 0.75;
+    margin-bottom: 25px;
 }
 
 input {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     border-radius: 12px;
     border: none;
-    margin: 10px 0;
+    margin-bottom: 15px;
+    background: rgba(255,255,255,0.12);
+    color: white;
     outline: none;
-    font-size: 14px;
+}
+
+input::placeholder {
+    color: rgba(255,255,255,0.6);
 }
 
 button {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     border-radius: 12px;
     border: none;
-    margin-top: 10px;
-    font-size: 15px;
     font-weight: 600;
+    font-size: 15px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* BUTTONS */
-.btn-login {
+.login-btn {
     background: linear-gradient(90deg, #00f2fe, #4facfe);
-    color: #003;
+    color: #002;
 }
 
-.btn-login:hover {
-    transform: scale(1.05);
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,200,255,0.4);
 }
 
-.btn-logout {
+.logout-btn {
     background: linear-gradient(90deg, #ff416c, #ff4b2b);
     color: white;
 }
 
-.username-box {
-    margin: 20px 0;
-    font-size: 18px;
-    font-weight: 600;
+.fade-out {
+    animation: fadeOut 0.5s forwards;
+}
+
+.fade-in {
+    animation: fadeIn 0.6s forwards;
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; transform: scale(0.95); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.profile-name {
+    margin: 25px 0;
+    font-size: 20px;
+    font-weight: 700;
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN PAGE -->
+<div class="bg"></div>
+
+<!-- LOGIN -->
 <div class="card" id="loginPage">
-    <h2>🚀 Hello Again</h2>
-    <p>Login dulu, dunia nungguin kamu</p>
+    <h2>Welcome Back</h2>
+    <div class="subtitle">Login to continue your journey</div>
 
-    <input type="text" id="username" placeholder="username">
-    <input type="password" id="password" placeholder="password">
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
 
-    <button class="btn-login" onclick="app.login()">Login</button>
+    <button class="login-btn" onclick="app.login()">Login</button>
 </div>
 
-<!-- PROFILE PAGE -->
+<!-- PROFILE -->
 <div class="card" id="profilePage" style="display:none;">
-    <h2>✨ Profile</h2>
-    <p>You're officially logged in</p>
+    <h2>Profile</h2>
+    <div class="subtitle">You're successfully logged in</div>
 
-    <div class="username-box" id="profileName"></div>
+    <div class="profile-name" id="profileUser"></div>
 
-    <button class="btn-logout" onclick="app.logout()">Logout</button>
+    <button class="logout-btn" onclick="app.logout()">Logout</button>
 </div>
 
 <script>
-class GenZLoginApp {
+class AnimatedLoginApp {
     constructor() {
-        this.defaultUser = {
-            username: "admin123",
-            password: "admin123"
+        this.user = {
+            username: "admin",
+            password: "12345"
         };
 
         if (!localStorage.getItem("userData")) {
-            localStorage.setItem("userData", JSON.stringify(this.defaultUser));
+            localStorage.setItem("userData", JSON.stringify(this.user));
         }
 
-        this.checkSession();
+        this.init();
+    }
+
+    init() {
+        if (localStorage.getItem("isLogin") === "true") {
+            this.showProfile(false);
+        }
     }
 
     login() {
-        const userInput = document.getElementById("username").value;
-        const passInput = document.getElementById("password").value;
+        const u = document.getElementById("username").value;
+        const p = document.getElementById("password").value;
+        const data = JSON.parse(localStorage.getItem("userData"));
 
-        const savedUser = JSON.parse(localStorage.getItem("userData"));
-
-        if (userInput === savedUser.username && passInput === savedUser.password) {
+        if (u === data.username && p === data.password) {
             localStorage.setItem("isLogin", "true");
-            localStorage.setItem("activeUser", userInput);
-            this.showProfile();
+            localStorage.setItem("activeUser", u);
+            this.switchPage("loginPage", "profilePage");
         } else {
-            alert("Login gagal 😢 Coba lagi ya!");
+            alert("Login gagal! Username atau password salah.");
         }
     }
 
     logout() {
         localStorage.removeItem("isLogin");
         localStorage.removeItem("activeUser");
-        this.showLogin();
+        this.switchPage("profilePage", "loginPage");
     }
 
-    showProfile() {
-        document.getElementById("loginPage").style.display = "none";
-        document.getElementById("profilePage").style.display = "block";
-        document.getElementById("profileName").innerText =
-            "👋 Hi, " + localStorage.getItem("activeUser");
+    switchPage(from, to) {
+        const fromPage = document.getElementById(from);
+        const toPage = document.getElementById(to);
+
+        fromPage.classList.add("fade-out");
+
+        setTimeout(() => {
+            fromPage.style.display = "none";
+            fromPage.classList.remove("fade-out");
+
+            if (to === "profilePage") {
+                document.getElementById("profileUser").innerText =
+                    "Hello, " + localStorage.getItem("activeUser");
+            }
+
+            toPage.style.display = "block";
+            toPage.classList.add("fade-in");
+
+            setTimeout(() => {
+                toPage.classList.remove("fade-in");
+            }, 600);
+        }, 500);
     }
 
-    showLogin() {
-        document.getElementById("loginPage").style.display = "block";
-        document.getElementById("profilePage").style.display = "none";
-    }
-
-    checkSession() {
-        if (localStorage.getItem("isLogin") === "true") {
-            this.showProfile();
+    showProfile(animated = true) {
+        if (animated) {
+            this.switchPage("loginPage", "profilePage");
+        } else {
+            document.getElementById("loginPage").style.display = "none";
+            document.getElementById("profilePage").style.display = "block";
+            document.getElementById("profileUser").innerText =
+                "Hello, " + localStorage.getItem("activeUser");
         }
     }
 }
 
-const app = new GenZLoginApp();
+const app = new AnimatedLoginApp();
 </script>
 
 </body>
